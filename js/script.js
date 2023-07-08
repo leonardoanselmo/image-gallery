@@ -3,6 +3,7 @@ const loadMoreBtn = document.querySelector(".load-more");
 const searchInput = document.querySelector(".search-box input");
 const lightBox = document.querySelector(".lightbox");
 const closeBtn = lightBox.querySelector(".uil-times");
+const downloadImgBtn = lightBox.querySelector(".uil-import");
 
 const apiKey = "ehuyNDywyPTfCCzcSYTN3OOcGf3vkNC9aY218uFDB0joUq7E5dbOCRb5";
 const perPage = 15;
@@ -21,6 +22,7 @@ const downloadImg = (imgURL) => {
 const showLightbox = (name, img) => {
   lightBox.querySelector("img").src = img;
   lightBox.querySelector("span").innerText = name;
+  downloadImgBtn.setAttribute("data-img", img);
   lightBox.classList.add("show");
   document.body.style.overflow = "hidden";
 }
@@ -40,7 +42,7 @@ const generateHTML = (images) => {
               <i class="uil uil-camera"></i>
               <span>${img.photographer}</span>
             </div>
-            <button onclick="downloadImg('${img.src.large2x}')">
+            <button onclick="downloadImg('${img.src.large2x}');event.stopPropagation();">
               <i class="uil uil-import"></i>
             </button>
           </div>
@@ -79,10 +81,11 @@ const loadSearchImages = (e) => {
   }
 }
 
-
 getImages(
   `https://api.pexels.com/v1/curated?page=${currentPage}&per_page=${perPage}`
 );
 loadMoreBtn.addEventListener("click", loadMoreImages);
 searchInput.addEventListener("keyup", loadSearchImages);
 closeBtn.addEventListener("click", hideLightbox);
+downloadImgBtn.addEventListener("click", (e) => downloadImg(e.target.dataset.img));
+
