@@ -85,6 +85,10 @@ input, button, i {
   border-radius: 4px;
 }
 
+.images .card .details {
+  position: absolute;
+}
+
 .images img {
   width: 100%;
 }
