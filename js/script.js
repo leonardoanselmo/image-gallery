@@ -1,23 +1,48 @@
 const imagesWrapper = document.querySelector(".images");
 const loadMoreBtn = document.querySelector(".load-more");
 const searchInput = document.querySelector(".search-box input");
+const lightBox = document.querySelector(".lightbox");
+const closeBtn = lightBox.querySelector(".uil-times");
 
 const apiKey = "ehuyNDywyPTfCCzcSYTN3OOcGf3vkNC9aY218uFDB0joUq7E5dbOCRb5";
 const perPage = 15;
 let currentPage = 1;
 let searchTerm = null;
 
+const downloadImg = (imgURL) => {
+  fetch(imgURL).then(res => res.blob()).then(file => {
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(file);
+    a.download = new Date().getTime();
+    a.click();
+  }).catch(() => alert("Falha ao carregar imagens!"));
+}
+
+const showLightbox = (name, img) => {
+  lightBox.querySelector("img").src = img;
+  lightBox.querySelector("span").innerText = name;
+  lightBox.classList.add("show");
+  document.body.style.overflow = "hidden";
+}
+
+const hideLightbox = () => {
+  lightBox.classList.remove("show");
+  document.body.style.overflow = "auto";
+}
+
 const generateHTML = (images) => {
   imagesWrapper.innerHTML += images.map(
     (img) =>
-      `<li class="card">
+      `<li class="card" onclick="showLightbox('${img.photographer}', '${img.src.large2x}')">
           <img src="${img.src.large2x}" alt="img">
           <div class="details">
-          <div class="photographer">
-            <i class="uil uil-camera"></i>
-            <span>${img.photographer}</span>
-          </div>
-          <button><i class="uil uil-import"></i></button>
+            <div class="photographer">
+              <i class="uil uil-camera"></i>
+              <span>${img.photographer}</span>
+            </div>
+            <button onclick="downloadImg('${img.src.large2x}')">
+              <i class="uil uil-import"></i>
+            </button>
           </div>
       </li>`
   ).join("");
@@ -60,3 +85,4 @@ getImages(
 );
 loadMoreBtn.addEventListener("click", loadMoreImages);
 searchInput.addEventListener("keyup", loadSearchImages);
+closeBtn.addEventListener("click", hideLightbox);
